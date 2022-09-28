@@ -1,0 +1,1 @@
+mvn package && cls && java -jar target\win-academy-console-app-1.0-SNAPSHOT.jar
