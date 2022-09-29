@@ -101,17 +101,29 @@ public class DataHolder implements Serializable {
         instance.roleUser.add(new Pair<>(admin.getId(),Constants.ROLE_ADMIN_ID));
         instance.users.add(admin);
         //adding teachers
-        Teacher teacher=new Teacher();
-        teacher.setId(++initialUsersCountValue);
-        teacher.setEmail("teacher@gmail.com");
-        teacher.setFirstName("hamza");
-        teacher.setLastName("lqraa");
-        teacher.setPassword("pass");
-        teacher.setDepartmentId(1);
-        teacher.setStartWorkDate(new Date(2021,9,19));
-        teacher.setSubjectId(1);
-        instance.roleUser.add(new Pair<>(teacher.getId(),Constants.ROLE_TEACHER_ID));
-        instance.users.add(teacher);
+        Teacher teacherAhmed=new Teacher();
+        teacherAhmed.setId(++initialUsersCountValue);
+        teacherAhmed.setEmail("ahmed@teacher.com");
+        teacherAhmed.setFirstName("bouchra");
+        teacherAhmed.setLastName("marzak");
+        teacherAhmed.setPassword("pass");
+        teacherAhmed.setDepartmentId(1);
+        teacherAhmed.setStartWorkDate(new Date(2021,9,19));
+        teacherAhmed.setSubjectId(Constants.SUBJECT_JAVA_ID);
+        instance.roleUser.add(new Pair<>(teacherAhmed.getId(),Constants.ROLE_TEACHER_ID));
+        instance.users.add(teacherAhmed);
+
+        Teacher teacherBouchra=new Teacher();
+        teacherBouchra.setId(++initialUsersCountValue);
+        teacherBouchra.setEmail("ahmed@teacher.com");
+        teacherBouchra.setFirstName("ahmed");
+        teacherBouchra.setLastName("errafie");
+        teacherBouchra.setPassword("pass");
+        teacherBouchra.setDepartmentId(1);
+        teacherBouchra.setStartWorkDate(new Date(2021,9,19));
+        teacherBouchra.setSubjectId(Constants.SUBJECT_JS_ID);
+        instance.roleUser.add(new Pair<>(teacherBouchra.getId(),Constants.ROLE_TEACHER_ID));
+        instance.users.add(teacherBouchra);
 
         //students
         Student studentIbrahim=new Student();
@@ -216,7 +228,7 @@ public class DataHolder implements Serializable {
         //java class students study react
         instance.classSubject.add(new Pair<Integer,Integer>(Constants.SCHOOL_CLASS_JS_ID,Constants.SUBJECT_REACT_ID));
 
-        //TODO inserting grades for students
+        //inserting grades for students
         instance.examGrades.add(new ExamGrade(1,12.5f,studentIbrahim.getId(),Constants.SUBJECT_JAVA_ID,new Date()));
         instance.examGrades.add(new ExamGrade(1,12.5f,studentIbrahim.getId(),Constants.SUBJECT_ANGULAR_ID,new Date()));
 

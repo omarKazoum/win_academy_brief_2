@@ -19,4 +19,9 @@ public class Pair<T1,T2> implements Serializable {
             Pair<T1,T2> p= (Pair<T1, T2>) obj;
             return p.right.equals(this.right) && p.left.equals(this.left);
         }
+
+    @Override
+    public int hashCode() {
+        return Integer.parseInt(left.hashCode()+""+right.hashCode());
     }
+}

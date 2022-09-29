@@ -14,7 +14,7 @@ public class Constants {
     public static final int ROLE_TEACHER_ID =3;
     public static final int ROLE_DEPARTMENT_RESPONSIBLE_ID =4;
 
-    public static final boolean enableAuthentification=true;
+    public static final boolean enableAuthentification=false;
     //admin main menu options
     public static final int MENU_ADMIN_STUDENT_AVERAGE_GRADE =1;
     public static final int MENU_ADMIN_DEPARTMENT_AVERAGE_GRADE =2;
