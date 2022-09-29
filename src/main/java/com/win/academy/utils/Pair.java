@@ -1,13 +1,15 @@
 package com.win.academy.utils;
 
-    public class Pair<T1,T2> {
-    public T1 first;
-    public T2 second;
+import java.io.Serializable;
+
+public class Pair<T1,T2> implements Serializable {
+    public T1 left;
+    public T2 right;
     public Pair(){
     }
-    public Pair(T1 first,T2 second){
-        this.first=first;
-        this.second=second;
+    public Pair(T1 left,T2 right){
+        this.left =left;
+        this.right =right;
     }
 
         @Override
@@ -15,6 +17,6 @@ package com.win.academy.utils;
             if(!(obj instanceof Pair))
                 return false;
             Pair<T1,T2> p= (Pair<T1, T2>) obj;
-            return p.second.equals(this.second) && p.first.equals(this.first);
+            return p.right.equals(this.right) && p.left.equals(this.left);
         }
     }

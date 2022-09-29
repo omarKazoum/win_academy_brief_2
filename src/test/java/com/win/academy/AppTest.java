@@ -4,10 +4,13 @@ import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
+import java.util.Date;
+
 /**
  * Unit test for simple App.
  */
-public class AppTest 
+@SuppressWarnings("deprecation")
+public class AppTest
     extends TestCase
 {
     /**
@@ -35,7 +38,8 @@ public class AppTest
     {
         assertTrue( true );
     }
-    public void testAutoBxing(){
-        assertTrue(new Integer(12).equals(new Integer(12)));
+    public void testDate(){
+        System.out.println(new Date(2021,8,19));
     }
+
 }

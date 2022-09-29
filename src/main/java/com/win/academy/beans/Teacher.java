@@ -6,6 +6,10 @@ public class Teacher extends User{
     private Date startWorkDate;
     private int subjectId;
 
+    public Teacher() {
+    }
+
+
     public Date getStartWorkDate() {
         return startWorkDate;
     }

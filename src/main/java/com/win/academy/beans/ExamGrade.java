@@ -10,6 +10,14 @@ public class ExamGrade implements Serializable {
     private int subjectId;
     private Date examDate;
 
+    public ExamGrade(int id, float examGrade, int studentId, int subjectId, Date examDate) {
+        this.id = id;
+        this.examGrade = examGrade;
+        this.studentId = studentId;
+        this.subjectId = subjectId;
+        this.examDate = examDate;
+    }
+
     public int getId() {
         return id;
     }

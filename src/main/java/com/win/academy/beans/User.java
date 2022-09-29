@@ -3,11 +3,9 @@ package com.win.academy.beans;
 import java.io.Serializable;
 
 public class User implements Serializable {
-
-    private int id;
-    private String firstName,lastName,phone,email, password;
+    protected int id;
+    protected String firstName,lastName,phone,email, password;
     public User(){
-
     }
     public int getId() {
         return id;
