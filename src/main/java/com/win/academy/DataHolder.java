@@ -38,7 +38,7 @@ public class DataHolder implements Serializable {
     public List<Pair<Integer,Integer>> classSubject;
     public List<Pair<Integer,Integer>> classTeacher;
 
-    public DataHolder() {
+    private DataHolder() {
         users=new ArrayList<>();
         adresses=new HashSet<>();
         cities=new HashSet<>();
@@ -103,14 +103,16 @@ public class DataHolder implements Serializable {
         //adding teachers
         Teacher teacherAhmed=new Teacher();
         teacherAhmed.setId(++initialUsersCountValue);
-        teacherAhmed.setEmail("ahmed@teacher.com");
+        teacherAhmed.setEmail("bouchra@teacher.com");
         teacherAhmed.setFirstName("bouchra");
         teacherAhmed.setLastName("marzak");
         teacherAhmed.setPassword("pass");
         teacherAhmed.setDepartmentId(1);
-        teacherAhmed.setStartWorkDate(new Date(2021,9,19));
+        teacherAhmed.setStartWorkDate(new Date(2021-1900,9,19));
         teacherAhmed.setSubjectId(Constants.SUBJECT_JAVA_ID);
         instance.roleUser.add(new Pair<>(teacherAhmed.getId(),Constants.ROLE_TEACHER_ID));
+        instance.roleUser.add(new Pair<>(teacherAhmed.getId(),Constants.ROLE_DEPARTMENT_RESPONSIBLE_ID));
+
         instance.users.add(teacherAhmed);
 
         Teacher teacherBouchra=new Teacher();
@@ -120,7 +122,7 @@ public class DataHolder implements Serializable {
         teacherBouchra.setLastName("errafie");
         teacherBouchra.setPassword("pass");
         teacherBouchra.setDepartmentId(1);
-        teacherBouchra.setStartWorkDate(new Date(2021,9,19));
+        teacherBouchra.setStartWorkDate(new Date(2021-1900,9,19));
         teacherBouchra.setSubjectId(Constants.SUBJECT_JS_ID);
         instance.roleUser.add(new Pair<>(teacherBouchra.getId(),Constants.ROLE_TEACHER_ID));
         instance.users.add(teacherBouchra);
@@ -133,7 +135,7 @@ public class DataHolder implements Serializable {
         studentIbrahim.setLastName("essydeq");
         studentIbrahim.setPassword("pass");
         studentIbrahim.setSchoolClassId(Constants.SCHOOL_CLASS_JAVA_ID);
-        studentIbrahim.setStartStudyingDate(new Date(2021,9,19));
+        studentIbrahim.setStartStudyingDate(new Date(2021-1900,9,19));
         instance.roleUser.add(new Pair<>(studentIbrahim.getId(),Constants.ROLE_STUDENT_ID));
         instance.users.add(studentIbrahim);
 
@@ -144,7 +146,7 @@ public class DataHolder implements Serializable {
         studentKhalil.setLastName("elkadih");
         studentKhalil.setPassword("pass");
         studentKhalil.setSchoolClassId(Constants.SCHOOL_CLASS_JAVA_ID);
-        studentKhalil.setStartStudyingDate(new Date(2021,9,19));
+        studentKhalil.setStartStudyingDate(new Date(2021-1900,9,19));
         instance.roleUser.add(new Pair<>(studentKhalil.getId(),Constants.ROLE_STUDENT_ID));
         instance.users.add(studentKhalil);
 
@@ -155,7 +157,7 @@ public class DataHolder implements Serializable {
         studentAgra.setLastName("agra");
         studentAgra.setPassword("pass");
         studentAgra.setSchoolClassId(Constants.SCHOOL_CLASS_JS_ID);
-        studentAgra.setStartStudyingDate(new Date(2021,9,19));
+        studentAgra.setStartStudyingDate(new Date(2021-1900,9,19));
         instance.roleUser.add(new Pair<>(studentAgra.getId(),Constants.ROLE_STUDENT_ID));
         instance.users.add(studentAgra);
 
@@ -227,6 +229,12 @@ public class DataHolder implements Serializable {
         instance.classSubject.add(new Pair<Integer,Integer>(Constants.SCHOOL_CLASS_JS_ID,Constants.SUBJECT_JS_ID));
         //java class students study react
         instance.classSubject.add(new Pair<Integer,Integer>(Constants.SCHOOL_CLASS_JS_ID,Constants.SUBJECT_REACT_ID));
+
+        //java class is thought by bouchra
+        instance.classTeacher.add(new Pair<>(Constants.SCHOOL_CLASS_JAVA_ID,teacherBouchra.getId()));
+        //js class is thought by ahmed
+        instance.classTeacher.add(new Pair<>(Constants.SCHOOL_CLASS_JS_ID,teacherAhmed.getId()));
+
 
         //inserting grades for students
         instance.examGrades.add(new ExamGrade(1,12.5f,studentIbrahim.getId(),Constants.SUBJECT_JAVA_ID,new Date()));
