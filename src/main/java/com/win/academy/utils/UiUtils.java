@@ -4,7 +4,9 @@ import com.win.academy.DataHolder;
 import com.win.academy.beans.*;
 import org.apache.commons.lang3.tuple.Pair;
 
+import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static com.win.academy.utils.Constants.*;
 
@@ -65,14 +67,65 @@ public class UiUtils {
             case MENU_ADMIN_SUBJECT_AVERAGE_GRADE:
                 menuOptionDisplaySubjectAverageGrade();
                 break;
-
+                //todo test this
             case MENU_ADMIN_STUDENT_FICHE_SIGNALÉTIQUE:
                 menuOptionDisplayStudentSignalitiqueFile();
                 break;
-
+            //student main menu options
+            case MENU_STUDENT_CHECK_MY_GRADES_PER_SUBJECT:
+                menuOptionDisplayMySubjectGrades();
+                ;break;
+            case MENU_STUDENT_CHECK_MY_AVERAGE_GRADE:
+                //TODO:: finish this
+                ;break;
+            case MENU_STUDENT_CHECK_MY_FICHE_SIGNALITIQUE:
+                //TODO:: finish this
+                ;break;
+            //teacher main menu options
+            case MENU_TEACHER_CHECK_MY_STUDENTS_LIST:
+                //TODO:: finish this
+                ;break;
+            //department responsible
+            case MENU_RESPONSIBLE_MY_DEPARTMENT_AVERAGE_GRADE:
+                //TODO:: finish this
+                ;break;
+            case MENU_RESPONSIBLE_STUDENT_FICHE_SIGNALÉTIQUE:
+                //TODO:: finish this
+                ;break;
             default:
                 throw new IllegalArgumentException("option "+option+" not supported yet !");
         }
+    }
+
+    private static void menuOptionDisplayMySubjectGrades() {
+        boolean isSubjectIdValid=false;
+        do {
+            System.out.println("Veillez entrer l'identifiant de matière pour lequel vous souhaitez consulter les notes:");
+            System.out.println("#\t\tNom");
+            DataHolder.getInstance().
+                    examGrades.stream().filter(sg->sg.getStudentId()==DataHolder.connectedUser.getId())
+                    .map(examGrade -> examGrade.getSubjectId()).distinct().map(subjectId->
+                            DataHolder.getInstance().subjets.stream().filter(s->s.getId()==subjectId).findFirst().get()).forEach(s-> System.out.printf("%d\t\t%s\n",s.getId(),s.getName()));
+
+            int subjectId = getScanner().nextInt();
+            Optional<Subject> subject = DataHolder.getInstance().subjets.stream().filter(s -> s.getId() == subjectId).findFirst();
+            isSubjectIdValid=subject.isPresent();
+            if(subject.isPresent()){
+                //so we know which subject to display average for
+                //let's do so
+                System.out.println("Nom de Matière\tNote\tDate d'exam");
+                DataHolder.getInstance().examGrades.stream()
+                        //finding teachers from the department
+                        .filter(eg->eg.getSubjectId()==subjectId && eg.getStudentId()==DataHolder.connectedUser.getId())
+                        //getting the subjects that these teachers are teaching
+                        .map(eg->String.format("%-15s\t%2.2f\t%s",
+                                ShortCuts.getSubjectById(eg.getSubjectId()).getName(),eg.getExamGrade(),new SimpleDateFormat("dd MMMM yyyy",Locale.FRANCE).format(eg.getExamDate())
+                                )
+                        ).forEach(System.out::println);
+
+                }
+        }while(!isSubjectIdValid);
+        promptToGoBack();
     }
 
     private static void menuOptionDisplaySubjectAverageGrade() {
@@ -110,7 +163,6 @@ public class UiUtils {
         }while(!isSubjectIdValid);
         promptToGoBack();
     }
-
     private static void menuOptionDisplayStudentSignalitiqueFile() {
         boolean isStudentIdValid=false;
         do {
@@ -137,7 +189,6 @@ public class UiUtils {
         }while(!isStudentIdValid);
         promptToGoBack();
     }
-
     private static void menuOptionAdminDisplayStudentAverageGrade(){
         boolean isStudentIdValid=false;
         do {

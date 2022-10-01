@@ -8,7 +8,7 @@ import java.io.*;
 import java.util.*;
 
 public class DataHolder implements Serializable {
-    public static DataHolder instance;
+    private static DataHolder instance;
     public static User connectedUser=null;
     public static final String fileParentFolder="C:\\test\\";
     private static final String filePath="C:\\test\\data.ser";
