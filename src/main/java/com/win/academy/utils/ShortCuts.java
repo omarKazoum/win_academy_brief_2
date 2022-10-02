@@ -30,7 +30,7 @@ public class ShortCuts {
                 .map(
                         classId->
                                 DataHolder.getInstance().users.stream().filter(u->u instanceof Student && ((Student)u).getSchoolClassId()==classId)
-                                        .toList())
-                .reduce(new ArrayList<User>(),(all, pre)->{all.addAll( pre);return all;}).stream().map(u->(Student)u).toList();
+                                        .collect(()-> new ArrayList<User>(),(con,item)->con.add(item),(c1,c2)->c1.addAll(c2)))
+                .reduce(new ArrayList<User>(),(all, pre)->{all.addAll( pre);return all;}).stream().map(u->(Student)u).collect(()-> new ArrayList<Student>(),(con,item)->con.add(item),(c1,c2)->c1.addAll(c2));
     }
 }

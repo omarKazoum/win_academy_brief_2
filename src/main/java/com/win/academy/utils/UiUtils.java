@@ -89,7 +89,6 @@ public class UiUtils {
                 menuOptionResponsibleGetMyDepartmentAverage();
                 ;break;
             case MENU_RESPONSIBLE_STUDENT_FICHE_SIGNALÉTIQUE:
-                //TODO:: finish this
                 menuOptionResponsibleDisplayStudentSignalitiqueFile();
                 ;break;
             default:
@@ -99,7 +98,6 @@ public class UiUtils {
     }
 
     private static void menuOptionResponsibleDisplayStudentSignalitiqueFile() {
-        //TODO fix this
         int departmentId=((Teacher)DataHolder.connectedUser).getDepartmentId();
         selectStudentFromListThen(DataHolder.getInstance().users.stream().
                         filter(u-> u instanceof Teacher && ((Teacher)u).getDepartmentId()==departmentId)
