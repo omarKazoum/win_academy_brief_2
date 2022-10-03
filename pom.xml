@@ -9,8 +9,8 @@
   <url>http://maven.apache.org</url>
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <maven.compiler.source>17</maven.compiler.source>
-    <maven.compile.target>17</maven.compile.target>
+    <maven.compiler.source>1.8</maven.compiler.source>
+    <maven.compile.target>1.8</maven.compile.target>
   </properties>
   <build>
   <plugins>
@@ -29,8 +29,8 @@
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
         <configuration>
-          <source>17</source>
-          <target>17</target>
+          <source>1.8</source>
+          <target>1.8</target>
         </configuration>
     </plugin>
   </plugins>

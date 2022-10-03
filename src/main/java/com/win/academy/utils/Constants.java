@@ -19,14 +19,16 @@ public class Constants {
     public static final int MENU_ADMIN_STUDENT_AVERAGE_GRADE =1;
     public static final int MENU_ADMIN_DEPARTMENT_AVERAGE_GRADE =2;
     public static final int MENU_ADMIN_SUBJECT_AVERAGE_GRADE =3;
-    public static final int MENU_ADMIN_STUDENT_FICHE_SIGNALÉTIQUE =4;
+    public static final int MENU_ADMIN_STUDENT_FICHE_SIGNALÉTIQUE = 4;
+    public static final int MENU_ADMIN_ADD_STUDENT = 5 ;
+    public static final int MENU_ADMIN_ADD_TEACHER=12;
     //student main menu options
-    public static final int MENU_STUDENT_CHECK_MY_GRADES_PER_SUBJECT =5;
-    public static final int MENU_STUDENT_CHECK_MY_AVERAGE_GRADE =6;
-    public static final int MENU_STUDENT_CHECK_MY_FICHE_SIGNALITIQUE =7;
+    public static final int MENU_STUDENT_CHECK_MY_GRADES_PER_SUBJECT =6;
+    public static final int MENU_STUDENT_CHECK_MY_AVERAGE_GRADE =7;
+    public static final int MENU_STUDENT_CHECK_MY_FICHE_SIGNALITIQUE =8;
     //teacher main menu options
-    public static final int MENU_TEACHER_CHECK_MY_STUDENTS_LIST =8;
+    public static final int MENU_TEACHER_CHECK_MY_STUDENTS_LIST =9;
     //department responsible
-    public static final int MENU_RESPONSIBLE_MY_DEPARTMENT_AVERAGE_GRADE =9;
-    public static final int MENU_RESPONSIBLE_STUDENT_FICHE_SIGNALÉTIQUE =10;
+    public static final int MENU_RESPONSIBLE_MY_DEPARTMENT_AVERAGE_GRADE =10;
+    public static final int MENU_RESPONSIBLE_STUDENT_FICHE_SIGNALÉTIQUE =11;
 }

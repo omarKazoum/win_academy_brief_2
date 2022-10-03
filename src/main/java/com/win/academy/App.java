@@ -16,9 +16,9 @@ import java.util.stream.Stream;
  */
 public class App 
 {
-   private static DataHolder dataHolder;
+    private static DataHolder dataHolder;
 
-    public static void main( String[] args ) throws InterruptedException {
+    public static void main( String[] args ){
         dataHolder=DataHolder.getInstance();
         UiUtils.printApplicationHeader();
         boolean isLoggedIn=false;
@@ -30,7 +30,8 @@ public class App
         UiUtils.clearScreen();
         UiUtils.printMainMenu();
         dataHolder.saveDataToFile();
-    }
+        System.exit(0);
 
+    }
 }
 

@@ -1,10 +1,17 @@
 package com.win.academy;
 
+
+import com.win.academy.utils.Constants;
+import com.win.academy.utils.Pair;
+import com.win.academy.utils.UiUtils;
+import junit.framework.Assert;
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
-
-import java.util.Date;
+import java.util.*;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * Unit test for simple App.
@@ -40,6 +47,10 @@ public class AppTest
     }
     public void testDate(){
         System.out.println(new Date(2021,8,19));
+    }
+    public void testRegex(){
+        Pattern pattern=Pattern.compile("[ab]");
+        assertTrue(pattern.matcher("a").matches());
     }
 
 }

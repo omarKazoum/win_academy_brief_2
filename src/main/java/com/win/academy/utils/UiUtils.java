@@ -7,16 +7,16 @@ import javax.xml.crypto.Data;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.function.Consumer;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import static com.win.academy.utils.Constants.*;
 
 public class UiUtils {
-    private static Scanner mScanner;
-    public static void printApplicationHeader(){
+    public  static void printApplicationHeader(){
         System.out.println("-------Bonjour à l'application Win Academy---");
     }
-    public static boolean logIn(){
+    public  static boolean logIn(){
         System.out.println("Veillez saisir votre email");
         Scanner scanner=new Scanner(System.in);
         String email=scanner.nextLine();
@@ -29,7 +29,7 @@ public class UiUtils {
         }
         return false;
     }
-    public static void printMainMenu(){
+    public  static void printMainMenu(){
         Map<Integer,String> options=new HashMap<>();
         System.out.println("----------Main menu-------");
         if(!enableAuthentification ||ShortCuts.doesConnectedUserHaveRole(Constants.ROLE_ADMIN_ID) ) {
@@ -37,6 +37,8 @@ public class UiUtils {
             options.put(MENU_ADMIN_DEPARTMENT_AVERAGE_GRADE,"Calculer la moyenne par département");
             options.put(MENU_ADMIN_SUBJECT_AVERAGE_GRADE,"Calculer la moyenne par matière");
             options.put(MENU_ADMIN_STUDENT_FICHE_SIGNALÉTIQUE,"Imprimer la fiche signalétique d'un élève");
+            options.put(MENU_ADMIN_ADD_STUDENT,"Ajouter un élève");
+            options.put(MENU_ADMIN_ADD_TEACHER,"Ajouter un enseignant");
         }
         if(!enableAuthentification ||ShortCuts.doesConnectedUserHaveRole(Constants.ROLE_STUDENT_ID )){
             options.put(MENU_STUDENT_CHECK_MY_GRADES_PER_SUBJECT,"Consulter mes notes de controles");
@@ -54,9 +56,10 @@ public class UiUtils {
         Scanner scanner=new Scanner(System.in);
         int option=-1;
         do{
-            System.out.println("tapez le numéro correspondant à l'option de votre choix:\n");
+            System.out.println("Tapez le numéro correspondant à l'option de votre choix:\n");
             option=scanner.nextInt();
-        }while(!(option>=1 && option<=10));
+        }while(!(options.containsKey(option)));
+        clearScreen();
         switch(option){
             case MENU_ADMIN_STUDENT_AVERAGE_GRADE:
                 menuOptionAdminDisplayStudentAverageGrade();
@@ -69,6 +72,12 @@ public class UiUtils {
                 break;
             case MENU_ADMIN_STUDENT_FICHE_SIGNALÉTIQUE:
                 menuOptionAdminDisplayStudentSignalitiqueFile();
+                break;
+            case MENU_ADMIN_ADD_STUDENT:
+                menuAddUser(ROLE_STUDENT_ID);
+                break;
+            case MENU_ADMIN_ADD_TEACHER:
+                menuAddUser(ROLE_TEACHER_ID);
                 break;
             //student main menu options
             case MENU_STUDENT_CHECK_MY_GRADES_PER_SUBJECT:
@@ -96,17 +105,15 @@ public class UiUtils {
         }
         promptToGoBack();
     }
-
     private static void menuOptionResponsibleDisplayStudentSignalitiqueFile() {
         int departmentId=((Teacher)DataHolder.connectedUser).getDepartmentId();
         selectStudentFromListThen(DataHolder.getInstance().users.stream().
                         filter(u-> u instanceof Teacher && ((Teacher)u).getDepartmentId()==departmentId)
-                        .map(t->DataHolder.getInstance().classTeacher.stream().filter(ct->ct.right==t.getId()).map(ct->ct.left).toList())
+                        .map(t->DataHolder.getInstance().classTeacher.stream().filter(ct->ct.right==t.getId()).map(ct->ct.left).collect(Collectors.toCollection(()->new ArrayList<>())))
                         .flatMap(Collection::stream).distinct().map(classId->DataHolder.getInstance().users.stream().filter(u->u instanceof Student && ((Student)u).getSchoolClassId()==classId)
-                        .toList()).flatMap(Collection::stream).map(u->(Student)u).toList()
+                        .collect(Collectors.toCollection(()->new ArrayList<>()))).flatMap((l)->l.stream()).map(u->(Student)u).collect(Collectors.toCollection(()->new ArrayList<>()))
                 ,UiUtils::printFicheSignalitiqueForStudent);
     }
-
     private static void menuOptionResponsibleGetMyDepartmentAverage() {
             int departmentId = ((Teacher) DataHolder.connectedUser).getDepartmentId();
             Optional<Department> department = DataHolder.getInstance().departments.stream().filter(d -> d.getId() == departmentId).findFirst();
@@ -123,15 +130,15 @@ public class UiUtils {
                         ).map(
                                 subject ->
                                         DataHolder.getInstance().examGrades.stream().filter(eg->eg.getSubjectId()
-                                                ==subject.getId()).toList()
+                                                ==subject.getId()).collect(Collectors.toCollection(()->new LinkedList<>()))
                         ).reduce(new LinkedList<ExamGrade>(),(pr,cu)->{pr.addAll(cu);return pr;});
 
                 float avg=departmentGrades.stream().map(g->g.getExamGrade()).reduce(0f,(sum,n)->sum+n);
                 avg/=departmentGrades.size();
                 System.out.println(department.get().getName()+" has an average of "+avg);
 
-    }
 
+    }
     private static void menuOptionTeacherCheckMyStudents() {
         int teacherId=DataHolder.connectedUser.getId();
         ShortCuts.getStudentsForTeacher(teacherId).forEach(s->{
@@ -139,18 +146,16 @@ public class UiUtils {
 
                 });
     }
-
     private static void menuOptionDisplayStudentSignalitiqueFile() {
                 printFicheSignalitiqueForStudent((Student) DataHolder.connectedUser);
             }
     private static void menuOptionStudentDisplayMyAverageGrade() {
         List<ExamGrade> studentGrades=DataHolder.getInstance().examGrades.stream()
-                .filter(eg->eg.getStudentId()==DataHolder.connectedUser.getId()).toList();
+                .filter(eg->eg.getStudentId()==DataHolder.connectedUser.getId()).collect(Collectors.toCollection(()->new ArrayList<>()));
         final float[] sum = {0};
         studentGrades.stream().forEach(g-> sum[0] +=g.getExamGrade());
         System.out.printf("votre moyenne générale est de  %.2f\n",sum[0]/studentGrades.size());
     }
-
     private static void menuOptionDisplayMySubjectGrades() {
         boolean isSubjectIdValid=false;
         do {
@@ -180,7 +185,6 @@ public class UiUtils {
                 }
         }while(!isSubjectIdValid);
     }
-
     private static void menuOptionDisplaySubjectAverageGrade() {
         boolean isSubjectIdValid=false;
         do {
@@ -194,7 +198,7 @@ public class UiUtils {
             if(subject.isPresent()){
                 //so we know which department to display average for
                 //let's do so
-                List<ExamGrade> departmentGrades=DataHolder.getInstance().examGrades.stream().filter(eg->eg.getSubjectId()==subject.get().getId()).toList();
+                List<ExamGrade> departmentGrades=DataHolder.getInstance().examGrades.stream().filter(eg->eg.getSubjectId()==subject.get().getId()).collect(Collectors.toCollection(()->new ArrayList<>()));
                 float avg=departmentGrades.stream().map(g->g.getExamGrade()).reduce(0f,(sum,n)->sum+n);
                 avg/=departmentGrades.size();
                 System.out.println(subject.get().getName()+" has an average of "+avg);
@@ -202,7 +206,7 @@ public class UiUtils {
         }while(!isSubjectIdValid);
     }
     private static void menuOptionAdminDisplayStudentSignalitiqueFile() {
-        selectStudentFromListThen( DataHolder.getInstance().users.stream().filter(u->u instanceof Student).map(u->(Student)u).toList(),UiUtils::printFicheSignalitiqueForStudent);
+        selectStudentFromListThen( DataHolder.getInstance().users.stream().filter(u->u instanceof Student).map(u->(Student)u).collect(Collectors.toCollection(()->new ArrayList<>())),UiUtils::printFicheSignalitiqueForStudent);
     }
     private static void menuOptionAdminDisplayStudentAverageGrade(){
         boolean isStudentIdValid=false;
@@ -218,7 +222,7 @@ public class UiUtils {
                 //so we know which student to display average for
                 //let's do so
                 List<ExamGrade> studentGrades=DataHolder.getInstance().examGrades.stream()
-                        .filter(eg->eg.getStudentId()==s.get().getId()).toList();
+                        .filter(eg->eg.getStudentId()==s.get().getId()).collect(Collectors.toCollection(()->new ArrayList<>()));
                 final float[] sum = {0};
                 studentGrades.stream().forEach(g-> sum[0] +=g.getExamGrade());
                 System.out.println(s.get().getFirstName()+" "+s.get().getLastName()+" has an average of "+sum[0]/studentGrades.size());
@@ -249,8 +253,8 @@ public class UiUtils {
                         ).map(
                                 subject ->
                                         DataHolder.getInstance().examGrades.stream().filter(eg->eg.getSubjectId()
-                                                ==subject.getId()).toList()
-                        ).reduce(new LinkedList<ExamGrade>(),(pr,cu)->{pr.addAll(cu);return pr;});
+                                                ==subject.getId()).collect(Collectors.toCollection(()->new ArrayList<>()))
+                        ).reduce(new ArrayList<>(),(pr,cu)->{pr.addAll(cu);return (ArrayList<ExamGrade>) pr;});
 
                 float avg=departmentGrades.stream().map(g->g.getExamGrade()).reduce(0f,(sum,n)->sum+n);
                 avg/=departmentGrades.size();
@@ -283,21 +287,153 @@ public class UiUtils {
                 System.out.println("Classe:"+ DataHolder.getInstance().schoolClasses.stream().filter(sc->sc.getId()==student.getSchoolClassId()).findFirst().get().getName());
                 System.out.println("-----------------------------");
             }
-    public static void clearScreen(){
-        System.out.print("------------------------------------------------");
+    public  static void menuAddUser(int newUserRole){
+        User newUser;
+        String userType="";
+        switch (newUserRole){
+            case ROLE_STUDENT_ID :
+                newUser=new Student();
+                userType=" élève ";
+                ;break;
+            case ROLE_TEACHER_ID:
+                newUser=new Teacher();
+                userType=" enseignant ";
+                ;break;
+            case ROLE_ADMIN_ID:
+                newUser=new Admin();
+                userType=" administrateur ";
+                ;break;
+            case ROLE_DEPARTMENT_RESPONSIBLE_ID:
+                newUser=new Teacher();
+                userType=" enseignant ";
+                ;break;
+            default:throw new IllegalArgumentException("unsupported user role "+newUserRole);
+        }
+        Scanner scanner=new Scanner(System.in);
+        System.out.println("insertion d'un nouveau "+userType+":");
+        do {
+            System.out.println("veillez saisir le nom de l'"+userType+"(doit contenir au moins 3 caractères)");
+            newUser.setFirstName(scanner.nextLine());
+        }while(newUser.getFirstName().length()<3);
+
+        do {
+            System.out.println("veillez saisir le prénom de l'"+userType+" (doit contenir au moins 3 caractères)");
+            newUser.setLastName(scanner.nextLine());
+        }while(newUser.getLastName().length()<3);
+        Pattern emailPattern= Pattern.compile("\\w+@\\w+(\\.\\w+)+");
+        do {
+            System.out.println("veillez saisir l'email de l'"+userType+" (doit etre un email valid)");
+            newUser.setEmail(scanner.nextLine());
+        }while(!emailPattern.matcher(newUser.getEmail()).matches());
+        do {
+            System.out.println("veillez saisir le mot de pass de l'"+userType+" (doit contenir au moins 8 caractères)");
+            newUser.setPassword(scanner.nextLine());
+        }while(newUser.getPassword().length()<8);
+        switch (newUserRole){
+            case ROLE_STUDENT_ID :
+                ((Student)newUser).setSchoolClassId(selectClassById());
+                ((Student)newUser).setStartStudyingDate(new Date());
+                ;break;
+            case ROLE_TEACHER_ID:
+                Teacher teacher= (Teacher) newUser;
+                teacher.setStartWorkDate(new Date());
+                teacher.setDepartmentId(selectSubject());
+                teacher.setSubjectId(selectDepartment());
+                ;break;
+            case ROLE_ADMIN_ID:
+
+                ;break;
+            case ROLE_DEPARTMENT_RESPONSIBLE_ID:
+                Teacher teacherResponsible= (Teacher) newUser;
+                teacherResponsible.setStartWorkDate(new Date());
+                teacherResponsible.setDepartmentId(selectSubject());
+                teacherResponsible.setSubjectId(selectDepartment());
+                DataHolder.getInstance().roleUser.add(new Pair<>(teacherResponsible.getId(), ROLE_DEPARTMENT_RESPONSIBLE_ID));
+                ;break;
+            default:throw new IllegalArgumentException("unsupported user role "+newUserRole);
+        }
+        DataHolder.getInstance().users.add(newUser);
     }
-    public static Scanner getScanner(){
+    private static int selectDepartment() {
+        boolean isDepartmentIdValid=false;
+        int departmentId=0;
+        do {
+            System.out.println("choisissez le département auquel le nouveau enseignant va appartenir:");
+            System.out.println("#\tnom département");
+            DataHolder.getInstance().departments.forEach(c->
+                    System.out.println(String.format("%d\t%s",c.getId(),c.getName())));
+            int selectDepartmentId=getScanner().nextInt();
+            Optional<Department> optionalSchoolClass=DataHolder.getInstance().departments.stream().filter(department->department.getId()==selectDepartmentId).findFirst();
+            isDepartmentIdValid=optionalSchoolClass.isPresent();
+            if(isDepartmentIdValid)
+                departmentId=optionalSchoolClass.get().getId();
+        }while(!isDepartmentIdValid);
+        return departmentId;
+    }
+    private static int selectSubject() {
+        boolean isSubjectIdValid=false;
+        int subjectId=0;
+        do {
+            System.out.println("choisissez la matière auquelle le nouveau enseignant va enseigner:");
+            System.out.println("#\tnom de matière");
+            DataHolder.getInstance().subjets.forEach(c->
+                    System.out.println(String.format("%d\t%s",c.getId(),c.getName())));
+            int selectSubjectId=getScanner().nextInt();
+            Optional<Subject> optionalSubject=DataHolder.getInstance().subjets.stream().filter(c->c.getId()==selectSubjectId).findFirst();
+            isSubjectIdValid=optionalSubject.isPresent();
+            if(isSubjectIdValid)
+                subjectId=optionalSubject.get().getId();
+        }while(!isSubjectIdValid);
+        return subjectId;
+    }
+    public  static int selectClassById(){
+        boolean isClassIdValid=false;
+        int classId=0;
+        do {
+            System.out.println("choisissez la classe auquelle le nouveau élève va appartenir:");
+            System.out.println("#\tnom de class");
+            DataHolder.getInstance().schoolClasses.forEach(c->
+                    System.out.println(String.format("%d\t%s",c.getId(),c.getName())));
+            int selectClassId=getScanner().nextInt();
+            Optional<SchoolClass> optionalSchoolClass=DataHolder.getInstance().schoolClasses.stream().filter(c->c.getId()==selectClassId).findFirst();
+            isClassIdValid=optionalSchoolClass.isPresent();
+            if(isClassIdValid)
+                classId=optionalSchoolClass.get().getId();
+        }while(!isClassIdValid);
+        return classId;
+    }
+    public  static void clearScreen(){
+            try{
+                String operatingSystemName = System.getProperty("os.name");
+                //System.out.println("system name:"+operatingSystemName);
+                if(operatingSystemName.contains("Windows")){
+                    ProcessBuilder pb = new ProcessBuilder("cmd", "/c", "cls");
+                    Process startProcess = pb.inheritIO().start();
+                    startProcess.waitFor();
+                } else {
+                    ProcessBuilder pb = new ProcessBuilder("clear");
+                    Process startProcess = pb.inheritIO().start();
+                    startProcess.waitFor();
+                }
+            }catch(Exception e){
+                System.out.println(e);
+            }
+
+    }
+    public  static Scanner getScanner(){
        // if(mScanner==null)
         //    mScanner=new Scanner(System.in);
         //return mScanner;
         return new Scanner(System.in);
     }
-    public static void promptToGoBack(){
+    public  static void promptToGoBack(){
         System.out.println("press 'Q' to exist or anything else to go to main menu");
         if(!getScanner().nextLine().equalsIgnoreCase("q")){
+            clearScreen();
             printApplicationHeader();
             printMainMenu();
         }else{
+            clearScreen();
             System.out.println("Bye!");
         }
     }
