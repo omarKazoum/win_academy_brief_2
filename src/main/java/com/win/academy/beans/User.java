@@ -1,19 +1,23 @@
 package com.win.academy.beans;
 
+import com.win.academy.DataHolder;
+
 import java.io.Serializable;
 
 public class User implements Serializable {
     protected int id;
-    protected String firstName,lastName,phone,email, password;
+    protected String firstName,
+            lastName,
+            phone,
+            email,
+            password;
     public User(){
+        id=DataHolder.getInstance().getNewUSerId();
     }
     public int getId() {
         return id;
     }
 
-    public void setId(int id) {
-        this.id = id;
-    }
 
     public String getFirstName() {
         return firstName;
