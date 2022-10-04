@@ -11,6 +11,7 @@ public class DataHolder implements Serializable {
     private int currentUserId;
     private int currentExamGradeId;
     private int currentSchoolClassId=3;
+    private int currentSchoolId=2;
 
 
     private static DataHolder instance;
@@ -248,6 +249,9 @@ public class DataHolder implements Serializable {
     }
     public int getCurrentSchoolClassId(){
         return ++currentSchoolClassId;
+    }
+    public int getCurrentSchoolId(){
+        return ++currentSchoolId;
     }
 
 }

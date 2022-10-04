@@ -34,4 +34,6 @@ public class Constants {
     public static final int MENU_ADMIN_ADD_ADMIN = 13;
     public static final int MENU_TEACHER_PUT_GRADE_FOR_STUDENT = 14;
     public static final int MENU_ADMIN_ADD_CLASS =15 ;
+    public static final int MENU_ADMIN_ADD_SCHOOL = 16;
+    public static final int MENU_ADMIN_CONSULTER_CLASSES = 17;
 }

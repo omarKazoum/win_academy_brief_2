@@ -8,6 +8,8 @@ import junit.framework.Assert;
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
+
+import javax.swing.*;
 import java.util.*;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -41,7 +43,7 @@ public class AppTest
     /**
      * Rigourous Test :-)
      */
-    public void testApp()
+    /*public void testApp()
     {
         assertTrue( true );
     }
@@ -58,8 +60,14 @@ public class AppTest
     public void testAddNote(){
         System.out.println("notes count :"+DataHolder.getInstance().examGrades.size());
     }
-    public  void testAddClass(){
+    public void testAddClass(){
         System.out.println("you have "+DataHolder.getInstance().schoolClasses.size()+" school classes");
+    }*/
+
+    public void testAddSchool(){
+        /*int countBeforeInsertion=DataHolder.getInstance().schools.size();
+        UiUtils.menuAdminAddSchool();
+        assertTrue(DataHolder.getInstance().schools.size()>countBeforeInsertion);*/
     }
 
 }

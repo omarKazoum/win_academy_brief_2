@@ -40,9 +40,9 @@ public class UiUtils {
             options.put(MENU_ADMIN_ADD_STUDENT,"Ajouter un élève");
             options.put(MENU_ADMIN_ADD_TEACHER,"Ajouter un enseignant");
             options.put(MENU_ADMIN_ADD_ADMIN,"Ajouter un administrateur");
-            options.put(Constants.MENU_ADMIN_ADD_CLASS,"Ajouter Une classe");
-
-
+            options.put(MENU_ADMIN_ADD_CLASS,"Ajouter Une classe");
+            options.put(MENU_ADMIN_ADD_SCHOOL,"Ajouter Une école");
+            options.put(MENU_ADMIN_CONSULTER_CLASSES,"Consulter la liste des classess");
         }
         if(!enableAuthentification ||ShortCuts.doesConnectedUserHaveRole(Constants.ROLE_STUDENT_ID )){
             options.put(MENU_STUDENT_CHECK_MY_GRADES_PER_SUBJECT,"Consulter mes notes de controles");
@@ -58,7 +58,7 @@ public class UiUtils {
             options.put(MENU_RESPONSIBLE_MY_DEPARTMENT_AVERAGE_GRADE,"calculer la moyenne générale de mon départements");
             options.put(MENU_RESPONSIBLE_STUDENT_FICHE_SIGNALÉTIQUE,"la fiche signalétique d'un étudiants ");
         }
-            options.keySet().stream().forEach(k-> System.out.println(k+"-> "+options.get(k)));
+            options.keySet().stream().sorted().forEach(k-> System.out.println(k+"-> "+options.get(k)));
         Scanner scanner=new Scanner(System.in);
         int option=-1;
         do{
@@ -91,6 +91,12 @@ public class UiUtils {
             case MENU_ADMIN_ADD_CLASS:
                 menuAdminAddSchoolClass();
                 break;
+            case MENU_ADMIN_ADD_SCHOOL:
+                menuAdminAddSchool();
+            break;
+            case MENU_ADMIN_CONSULTER_CLASSES:
+                menuAdminCheckClasses();
+            break;
 
             //student main menu options
             case MENU_STUDENT_CHECK_MY_GRADES_PER_SUBJECT:
@@ -121,6 +127,13 @@ public class UiUtils {
         }
         promptToGoBack();
     }
+
+    private static void menuAdminCheckClasses() {
+        System.out.println("#\tnom de class");
+        DataHolder.getInstance().schoolClasses.forEach(c->
+                System.out.println(String.format("%d\t%s",c.getId(),c.getName())));
+    }
+
     private static void menuTeacherPutAGradeForStudent() {
         int classId=selectClassById(DataHolder.connectedUser.getId());
         if(classId==-1) {
@@ -175,7 +188,7 @@ public class UiUtils {
         selectStudentFromListThen(DataHolder.getInstance().users.stream().
                         filter(u-> u instanceof Teacher && ((Teacher)u).getDepartmentId()==departmentId)
                         .map(t->DataHolder.getInstance().classTeacher.stream().filter(ct->ct.right==t.getId()).map(ct->ct.left).collect(Collectors.toCollection(()->new ArrayList<>())))
-                        .flatMap(Collection::stream).distinct().map(classId->DataHolder.getInstance().users.stream().filter(u->u instanceof Student && ((Student)u).getSchoolClassId()==classId)
+                        .flatMap((i)->i.stream()).distinct().map(classId->DataHolder.getInstance().users.stream().filter(u->u instanceof Student && ((Student)u).getSchoolClassId()==classId)
                         .collect(Collectors.toCollection(()->new ArrayList<>()))).flatMap((l)->l.stream()).map(u->(Student)u).collect(Collectors.toCollection(()->new ArrayList<>()))
                 ,UiUtils::printFicheSignalitiqueForStudent);
     }
@@ -419,6 +432,21 @@ public class UiUtils {
         }
         DataHolder.getInstance().users.add(newUser);
     }
+    public static void menuAdminAddSchool(){
+        School school=new School();
+        do {
+            System.out.println("veillez saisir le nom de l'école à ajouter (doit contenir au moins 3 caractères)");
+            school.setName(getScanner().nextLine());
+        }while (school.getName().length()<3);
+        do {
+            System.out.println("veillez saisir le lien du site web de "+school.getName()+" (doit contenir au moins 3 caractères)");
+            school.setSiteUrl(getScanner().nextLine());
+        }while (school.getSiteUrl().length()<3);
+
+        school.setId(DataHolder.getInstance().getCurrentSchoolId());
+        DataHolder.getInstance().schools.add(school);
+    }
+
     public static void menuAdminAddSchoolClass(){
         SchoolClass schoolClass=new SchoolClass();
         do {
@@ -514,4 +542,5 @@ public class UiUtils {
             System.out.println("Bye!");
         }
     }
+    //TODO:: DELETE
 }
