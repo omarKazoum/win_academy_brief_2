@@ -31,7 +31,6 @@ public class App
         UiUtils.printMainMenu();
         dataHolder.saveDataToFile();
         System.exit(0);
-
     }
 }
 

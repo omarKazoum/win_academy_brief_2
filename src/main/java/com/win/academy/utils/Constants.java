@@ -31,4 +31,7 @@ public class Constants {
     //department responsible
     public static final int MENU_RESPONSIBLE_MY_DEPARTMENT_AVERAGE_GRADE =10;
     public static final int MENU_RESPONSIBLE_STUDENT_FICHE_SIGNALÉTIQUE =11;
+    public static final int MENU_ADMIN_ADD_ADMIN = 13;
+    public static final int MENU_TEACHER_PUT_GRADE_FOR_STUDENT = 14;
+    public static final int MENU_ADMIN_ADD_CLASS =15 ;
 }

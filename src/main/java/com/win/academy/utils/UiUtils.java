@@ -39,6 +39,10 @@ public class UiUtils {
             options.put(MENU_ADMIN_STUDENT_FICHE_SIGNALÉTIQUE,"Imprimer la fiche signalétique d'un élève");
             options.put(MENU_ADMIN_ADD_STUDENT,"Ajouter un élève");
             options.put(MENU_ADMIN_ADD_TEACHER,"Ajouter un enseignant");
+            options.put(MENU_ADMIN_ADD_ADMIN,"Ajouter un administrateur");
+            options.put(Constants.MENU_ADMIN_ADD_CLASS,"Ajouter Une classe");
+
+
         }
         if(!enableAuthentification ||ShortCuts.doesConnectedUserHaveRole(Constants.ROLE_STUDENT_ID )){
             options.put(MENU_STUDENT_CHECK_MY_GRADES_PER_SUBJECT,"Consulter mes notes de controles");
@@ -47,6 +51,8 @@ public class UiUtils {
         }
         if(!enableAuthentification ||ShortCuts.doesConnectedUserHaveRole(Constants.ROLE_TEACHER_ID)){
             options.put(MENU_TEACHER_CHECK_MY_STUDENTS_LIST,"consulter la liste de mes étudiants");
+            options.put(MENU_TEACHER_PUT_GRADE_FOR_STUDENT,"Mettre une note pour un étudiant");
+
         }
         if(!enableAuthentification ||ShortCuts.doesConnectedUserHaveRole(Constants.ROLE_DEPARTMENT_RESPONSIBLE_ID)){
             options.put(MENU_RESPONSIBLE_MY_DEPARTMENT_AVERAGE_GRADE,"calculer la moyenne générale de mon départements");
@@ -79,6 +85,13 @@ public class UiUtils {
             case MENU_ADMIN_ADD_TEACHER:
                 menuAddUser(ROLE_TEACHER_ID);
                 break;
+            case MENU_ADMIN_ADD_ADMIN:
+                menuAddUser(ROLE_ADMIN_ID);
+                break;
+            case MENU_ADMIN_ADD_CLASS:
+                menuAdminAddSchoolClass();
+                break;
+
             //student main menu options
             case MENU_STUDENT_CHECK_MY_GRADES_PER_SUBJECT:
                 menuOptionDisplayMySubjectGrades();
@@ -93,6 +106,9 @@ public class UiUtils {
             case MENU_TEACHER_CHECK_MY_STUDENTS_LIST:
                 menuOptionTeacherCheckMyStudents();
                 ;break;
+            case Constants.MENU_TEACHER_PUT_GRADE_FOR_STUDENT:
+                menuTeacherPutAGradeForStudent();
+                break;
             //department responsible
             case MENU_RESPONSIBLE_MY_DEPARTMENT_AVERAGE_GRADE:
                 menuOptionResponsibleGetMyDepartmentAverage();
@@ -104,6 +120,55 @@ public class UiUtils {
                 throw new IllegalArgumentException("option "+option+" not supported yet !");
         }
         promptToGoBack();
+    }
+    private static void menuTeacherPutAGradeForStudent() {
+        int classId=selectClassById(DataHolder.connectedUser.getId());
+        if(classId==-1) {
+            System.out.println("vous n'enseigner aucune classe");
+        return;
+        }
+        System.out.println("classe bine sélectionné");
+        int studentId=selectStudentFromClass(classId);
+        System.out.println("student selected has an id of "+studentId);
+        boolean isError=false;
+        float note;
+        do{
+            if(isError)
+                System.err.println("la note doit étre entre 0 et 20");
+            System.out.println("entrez la note que vous souhaitez lui mettre (la date de la note sera aujourd'hui)");
+            note=getScanner().nextFloat();
+            isError=true;
+        }while (!(note>=0 && note <=20));
+        //Student s=DataHolder.getInstance().users.stream().filter(u->u instanceof Student && u.getId()==studentId).map(u->(Student)u).findFirst().get();
+        int subjectId=DataHolder.getInstance().users.stream().filter(u->u instanceof Teacher && u.getId()==DataHolder.connectedUser.getId()).map(u->(Teacher)u).findFirst().get().getSubjectId();
+        DataHolder.getInstance().examGrades.add(new ExamGrade(note,studentId,subjectId,new Date()));
+    }
+    private static int selectStudentFromClass(int classId) {
+        int[] id=new int[1];
+        selectStudentFromListThen(DataHolder.getInstance().users.stream().filter(u->u instanceof Student && ((Student)u).getSchoolClassId()==classId).map(u->((Student)u)).collect(Collectors.toList()),
+                s->id[0]=s.getId());
+        return id[0];
+    }
+    private static int selectClassById(int teacherId) {
+        boolean isClassIdValid=false;
+        int classId=0;
+        do {
+            List<SchoolClass> classes=DataHolder.getInstance().classTeacher.stream().filter(ct->ct.right==teacherId).map(ct->ct.left).map(ci->DataHolder.getInstance().schoolClasses.stream().filter(c->c.getId()==ci).findFirst().get()).collect(Collectors.toList());
+            if(classes.size()==0)
+                return -1;
+            System.out.println("choisissez la classe auquelle le nouveau élève va appartenir:");
+            System.out.println("#\tnom de class");
+            classes.forEach(c->
+                    System.out.println(String.format("%d\t%s",c.getId(),c.getName())));
+
+            int selectClassId=getScanner().nextInt();
+            Optional<SchoolClass> optionalSchoolClass=DataHolder.getInstance().schoolClasses.stream().filter(c->c.getId()==selectClassId).findFirst();
+            isClassIdValid=optionalSchoolClass.isPresent();
+            if(isClassIdValid)
+                classId=optionalSchoolClass.get().getId();
+        }while(!isClassIdValid);
+        return classId;
+
     }
     private static void menuOptionResponsibleDisplayStudentSignalitiqueFile() {
         int departmentId=((Teacher)DataHolder.connectedUser).getDepartmentId();
@@ -353,6 +418,18 @@ public class UiUtils {
             default:throw new IllegalArgumentException("unsupported user role "+newUserRole);
         }
         DataHolder.getInstance().users.add(newUser);
+    }
+    public static void menuAdminAddSchoolClass(){
+        SchoolClass schoolClass=new SchoolClass();
+        do {
+            System.out.println("veillez saisir le nom du class à ajouter");
+            schoolClass.setName(getScanner().nextLine());
+        }while(schoolClass.getName().length()<3);
+       schoolClass.setId(DataHolder.getInstance().getCurrentSchoolClassId());
+        // set department id
+        schoolClass.setDepartmentId(selectDepartment());
+        DataHolder.getInstance().schoolClasses.add(schoolClass);
+        System.out.println("class "+schoolClass.getName()+" bien ajouté avec l'id "+schoolClass.getId());
     }
     private static int selectDepartment() {
         boolean isDepartmentIdValid=false;

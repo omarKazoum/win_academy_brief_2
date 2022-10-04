@@ -9,6 +9,10 @@ import java.util.*;
 
 public class DataHolder implements Serializable {
     private int currentUserId;
+    private int currentExamGradeId;
+    private int currentSchoolClassId=3;
+
+
     private static DataHolder instance;
     public static User connectedUser=null;
     public static final String fileParentFolder="C:\\test\\";
@@ -55,6 +59,8 @@ public class DataHolder implements Serializable {
         classSubject=new ArrayList<>();
         classTeacher=new ArrayList<>();
         currentUserId=1;
+        currentExamGradeId=1;
+
     }
 
     private static boolean loadDataFromFile(){
@@ -225,16 +231,23 @@ public class DataHolder implements Serializable {
 
 
         //inserting grades for students
-        this.examGrades.add(new ExamGrade(1,12.5f,studentIbrahim.getId(),Constants.SUBJECT_JAVA_ID,new Date()));
-        this.examGrades.add(new ExamGrade(1,12.5f,studentIbrahim.getId(),Constants.SUBJECT_ANGULAR_ID,new Date()));
+        this.examGrades.add(new ExamGrade(12.5f,studentIbrahim.getId(),Constants.SUBJECT_JAVA_ID,new Date()));
+        this.examGrades.add(new ExamGrade(12.5f,studentIbrahim.getId(),Constants.SUBJECT_ANGULAR_ID,new Date()));
 
-        this.examGrades.add(new ExamGrade(1,15.5f,studentKhalil.getId(),Constants.SUBJECT_JAVA_ID,new Date()));
-        this.examGrades.add(new ExamGrade(1,14.5f,studentKhalil.getId(),Constants.SUBJECT_ANGULAR_ID,new Date()));
+        this.examGrades.add(new ExamGrade(15.5f,studentKhalil.getId(),Constants.SUBJECT_JAVA_ID,new Date()));
+        this.examGrades.add(new ExamGrade(14.5f,studentKhalil.getId(),Constants.SUBJECT_ANGULAR_ID,new Date()));
 
-        this.examGrades.add(new ExamGrade(1,18.5f,studentAgra.getId(),Constants.SUBJECT_JS_ID,new Date()));
-        this.examGrades.add(new ExamGrade(1,14.5f,studentAgra.getId(),Constants.SUBJECT_REACT_ID,new Date()));
+        this.examGrades.add(new ExamGrade(18.5f,studentAgra.getId(),Constants.SUBJECT_JS_ID,new Date()));
+        this.examGrades.add(new ExamGrade(14.5f,studentAgra.getId(),Constants.SUBJECT_REACT_ID,new Date()));
     }
     public int getNewUSerId(){
         return ++currentUserId;
     }
+    public int getNewExamGradeId(){
+        return ++currentExamGradeId;
+    }
+    public int getCurrentSchoolClassId(){
+        return ++currentSchoolClassId;
+    }
+
 }

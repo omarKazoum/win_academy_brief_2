@@ -52,5 +52,14 @@ public class AppTest
         Pattern pattern=Pattern.compile("[ab]");
         assertTrue(pattern.matcher("a").matches());
     }
+    public void testUniCode() {
+        System.out.println("from test: "+((char)190));
+    }
+    public void testAddNote(){
+        System.out.println("notes count :"+DataHolder.getInstance().examGrades.size());
+    }
+    public  void testAddClass(){
+        System.out.println("you have "+DataHolder.getInstance().schoolClasses.size()+" school classes");
+    }
 
 }

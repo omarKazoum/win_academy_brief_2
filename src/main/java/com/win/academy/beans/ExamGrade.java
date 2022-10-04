@@ -1,5 +1,7 @@
 package com.win.academy.beans;
 
+import com.win.academy.DataHolder;
+
 import java.io.Serializable;
 import java.util.Date;
 
@@ -10,20 +12,16 @@ public class ExamGrade implements Serializable {
     private int subjectId;
     private Date examDate;
 
-    public ExamGrade(int id, float examGrade, int studentId, int subjectId, Date examDate) {
-        this.id = id;
+    public ExamGrade( float examGrade, int studentId, int subjectId, Date examDate) {
         this.examGrade = examGrade;
         this.studentId = studentId;
         this.subjectId = subjectId;
         this.examDate = examDate;
+        this.id= DataHolder.getInstance().getNewExamGradeId();
     }
 
     public int getId() {
         return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
     }
 
     public float getExamGrade() {
